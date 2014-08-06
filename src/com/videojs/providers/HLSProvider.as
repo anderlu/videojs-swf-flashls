@@ -58,6 +58,7 @@ package com.videojs.providers{
           _hls.addEventListener(HLSEvent.MANIFEST_LOADED,_manifestHandler);
           _hls.addEventListener(HLSEvent.MEDIA_TIME,_mediaTimeHandler);
           _hls.addEventListener(HLSEvent.PLAYBACK_STATE,_stateHandler);
+          _hls.addEventListener(HLSEvent.LEVEL_SWITCH,_levelSwitchHandler);
         }
 
         private function _completeHandler(event:HLSEvent):void {
@@ -154,6 +155,14 @@ package com.videojs.providers{
                 break;
           }
         };
+
+        private function _levelSwitchHandler(event:HLSEvent):void {
+            var levelIndex:Number = event.level;
+            var bitrate:Number = _hls.levels[levelIndex].bitrate;
+            var width:Number = _hls.levels[levelIndex].width;
+            var height:Number = _hls.levels[levelIndex].height;
+            Log.info("HLSProvider: new level index " + levelIndex + " bitrate=" + bitrate + ", width=" + width + ", height=" + height);
+        }
 
         private function _onFrame(event:Event):void
         {
@@ -497,5 +506,43 @@ package com.videojs.providers{
             throw "HLSProvider does not support abort";
         }        
         
+        /**
+         * Should return the number of stream levels that this content has.
+         */
+        public function get numberOfLevels():int
+        {
+            return _hls.levels.length;
+        }
+
+        /**
+         * Should return the currently used stream level.
+         */
+        public function get level():int
+        {
+            return _hls.level;
+        }
+
+        /**
+         * Select the stream level.
+         * If -1 is specified, it means auto selection.
+         * If a level is specified (0-based index), that level is used and auto selection is disabled.
+         */
+        public function set level(pLevel:int):void
+        {
+            _hls.level = pLevel;
+
+            // For reflecting new level from the next segment. Otherwise, new setting is applied only after currently buffered data is gone.
+            if (!isNaN(_position) && pLevel != -1) {
+                _hls.stream.seek(_position);
+            }
+        }
+
+        /**
+          * Should return whether auto level selection is currently enabled or not.
+          */
+        public function get autoLevelEnabled():Boolean
+        {
+            return _hls.autolevel;
+        }
     }
 }
