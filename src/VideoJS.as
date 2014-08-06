@@ -126,6 +126,47 @@ package{
                 _app.model.poster = String(loaderInfo.parameters.poster);
             }
             
+            // HLS provider confiugrations. These must be set before setting source because setting source triggers the creation of the provider.
+            if(loaderInfo.parameters.hls_debug != undefined){
+                _app.model.hlsDebug = (loaderInfo.parameters.hls_debug == "true") ? true : false;
+            }
+            if(loaderInfo.parameters.hls_debug2 != undefined){
+                _app.model.hlsDebug2 = (loaderInfo.parameters.hls_debug2 == "true") ? true : false;
+            }
+            if(loaderInfo.parameters.hls_minbufferlength != undefined){
+                _app.model.hlsMinBufferLength = Number(loaderInfo.parameters.hls_minbufferlength);
+            }
+            if(loaderInfo.parameters.hls_lowbufferlength != undefined){
+                _app.model.hlsLowBufferLength = Number(loaderInfo.parameters.hls_lowbufferlength);
+            }
+            if(loaderInfo.parameters.hls_maxbufferlength != undefined){
+                _app.model.hlsMaxBufferLength = Number(loaderInfo.parameters.hls_maxbufferlength);
+            }
+            if(loaderInfo.parameters.hls_startfromlevel != undefined){
+                _app.model.hlsStartFromLevel = Number(loaderInfo.parameters.hls_startfromlevel);
+            }
+            if(loaderInfo.parameters.hls_seekfromlevel != undefined){
+                _app.model.hlsSeekFromLevel = Number(loaderInfo.parameters.hls_seekfromlevel);
+            }
+            if(loaderInfo.parameters.hls_live_flushurlcache != undefined){
+                _app.model.hlsLiveFlushUrlCache = (loaderInfo.parameters.hls_live_flushurlcache == "true") ? true : false;
+            }
+            if(loaderInfo.parameters.hls_seekmode != undefined && loaderInfo.parameters.hls_seekmode != ""){
+                _app.model.hlsSeekMode = String(loaderInfo.parameters.hls_seekmode);
+            }
+            if(loaderInfo.parameters.hls_manifestloadmaxretry != undefined){
+                _app.model.hlsManifestLoadMaxRetry = int(loaderInfo.parameters.hls_manifestloadmaxretry);
+            }
+            if(loaderInfo.parameters.hls_fragmentloadmaxretry != undefined){
+                _app.model.hlsFragmentLoadMaxRetry = int(loaderInfo.parameters.hls_fragmentloadmaxretry);
+            }
+            if(loaderInfo.parameters.hls_capleveltostage != undefined){
+                _app.model.hlsCapLevelToStage = (loaderInfo.parameters.hls_capleveltostage == "true") ? true : false;
+            }
+            if(loaderInfo.parameters.hls_maxlevelcappingmode != undefined && loaderInfo.parameters.hls_maxlevelcappingmode != ""){
+                _app.model.hlsMaxLevelCappingMode = String(loaderInfo.parameters.hls_maxlevelcappingmode);
+            }
+
             if(loaderInfo.parameters.src != undefined && loaderInfo.parameters.src != ""){
               if (isExternalMSObjectURL(loaderInfo.parameters.src)) {
                 _app.model.srcFromFlashvars = null;

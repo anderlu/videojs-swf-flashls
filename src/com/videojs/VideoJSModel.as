@@ -44,7 +44,20 @@ package com.videojs{
         private var _rtmpConnectionURL:String = "";
         private var _rtmpStream:String = "";
         private var _poster:String = "";
-        
+        private var _hlsDebug:Boolean = false;
+        private var _hlsDebug2:Boolean = false;
+        private var _hlsMinBufferLength:Number = -1;
+        private var _hlsLowBufferLength:Number = 3;
+        private var _hlsMaxBufferLength:Number = 60;
+        private var _hlsStartFromLevel:Number = -1;
+        private var _hlsSeekFromLevel:Number = -1;
+        private var _hlsLiveFlushUrlCache:Boolean = true; // flashls's default is false, but it is set to true for video.js integration.
+        private var _hlsSeekMode:String = "ACCURATE";
+        private var _hlsManifestLoadMaxRetry:int = -1;
+        private var _hlsFragmentLoadMaxRetry:int = -1;
+        private var _hlsCapLevelToStage:Boolean = false;
+        private var _hlsMaxLevelCappingMode:String = 'downscale';
+
         private static var _instance:VideoJSModel;
         
         public function VideoJSModel(pLock:SingletonLock){
@@ -282,6 +295,47 @@ package com.videojs{
         public function set poster(pValue:String):void{
             _poster = pValue;
             broadcastEvent(new VideoJSEvent(VideoJSEvent.POSTER_SET));
+        }
+        
+        // HLS provider configuration. Setter only.
+        public function set hlsDebug(pValue:Boolean):void{
+            _hlsDebug = pValue;
+        }
+        public function set hlsDebug2(pValue:Boolean):void{
+            _hlsDebug2 = pValue;
+        }
+        public function set hlsMinBufferLength(pValue:Number):void{
+            _hlsMinBufferLength = pValue;
+        }
+        public function set hlsLowBufferLength(pValue:Number):void{
+            _hlsLowBufferLength = pValue;
+        }
+        public function set hlsMaxBufferLength(pValue:Number):void{
+            _hlsMaxBufferLength = pValue;
+        }
+        public function set hlsStartFromLevel(pValue:Number):void{
+            _hlsStartFromLevel = pValue;
+        }
+        public function set hlsSeekFromLevel(pValue:Number):void{
+            _hlsSeekFromLevel = pValue;
+        }
+        public function set hlsLiveFlushUrlCache(pValue:Boolean):void{
+            _hlsLiveFlushUrlCache = pValue;
+        }
+        public function set hlsSeekMode(pValue:String):void{
+            _hlsSeekMode = pValue;
+        }
+        public function set hlsManifestLoadMaxRetry(pValue:int):void{
+            _hlsManifestLoadMaxRetry = pValue;
+        }
+        public function set hlsFragmentLoadMaxRetry(pValue:int):void{
+            _hlsFragmentLoadMaxRetry = pValue;
+        }
+        public function set hlsCapLevelToStage(pValue:Boolean):void{
+            _hlsCapLevelToStage = pValue;
+        }
+        public function set hlsMaxLevelCappingMode(pValue:String):void{
+            _hlsMaxLevelCappingMode = pValue;
         }
         
         public function get hasEnded():Boolean{
@@ -596,7 +650,20 @@ package com.videojs{
                     }
                     else if(_currentPlaybackType == PlaybackType.HLS){
                         __src = {
-                            m3u8: _src
+                            m3u8: _src,
+                            debug: _hlsDebug,
+                            debug2: _hlsDebug2,
+                            minBufferLength: _hlsMinBufferLength,
+                            lowBufferLength: _hlsLowBufferLength,
+                            maxBufferLength: _hlsMaxBufferLength,
+                            startFromLevel: _hlsStartFromLevel,
+                            seekFromLevel: _hlsSeekFromLevel,
+                            liveFlushUrlCache: _hlsLiveFlushUrlCache,
+                            seekMode: _hlsSeekMode,
+                            manifestLoadMaxRetry: _hlsManifestLoadMaxRetry,
+                            fragmentLoadMaxRetry: _hlsFragmentLoadMaxRetry,
+                            capLevelToStage: _hlsCapLevelToStage,
+                            maxLevelCappingMode: _hlsMaxLevelCappingMode
                         };
                         _provider = new HLSProvider();
                         _provider.attachVideo(_videoReference);

@@ -49,9 +49,7 @@ package com.videojs.providers{
 
         public function HLSProvider() {
           Log.info("flashls 0.1.0");
-          //HLSSettings.logDebug = true;
           _hls = new HLS();
-          HLSSettings.flushLiveURLCache=true;
           _model = VideoJSModel.getInstance();
           _metadata = {};
           _hls.addEventListener(HLSEvent.PLAYBACK_COMPLETE,_completeHandler);
@@ -331,6 +329,35 @@ package com.videojs.providers{
          * Should return the most reasonable string representation of the current assets source location.
          */
         public function init(pSrc:Object, pAutoplay:Boolean):void {
+          HLSSettings.logDebug = pSrc.debug;
+          HLSSettings.logDebug2 = pSrc.debug2;
+          HLSSettings.minBufferLength = pSrc.minBufferLength;
+          HLSSettings.lowBufferLength = pSrc.lowBufferLength;
+          HLSSettings.maxBufferLength = pSrc.maxBufferLength;
+          HLSSettings.startFromLevel = pSrc.startFromLevel;
+          HLSSettings.seekFromLevel = pSrc.seekFromLevel;
+          HLSSettings.flushLiveURLCache = pSrc.liveFlushUrlCache;
+          HLSSettings.seekMode = pSrc.seekMode;
+          HLSSettings.manifestLoadMaxRetry = pSrc.manifestLoadMaxRetry;
+          HLSSettings.fragmentLoadMaxRetry = pSrc.fragmentLoadMaxRetry;
+          HLSSettings.capLevelToStage = pSrc.capLevelToStage;
+          HLSSettings.maxLevelCappingMode = pSrc.maxLevelCappingMode;
+
+          Log.debug("HLSProvider.init.");
+          Log.debug("HLSSettings.logDebug=" + HLSSettings.logDebug);
+          Log.debug("HLSSettings.logDebug2=" + HLSSettings.logDebug2);
+          Log.debug("HLSSettings.minBufferLength=" + HLSSettings.minBufferLength);
+          Log.debug("HLSSettings.lowBufferLength=" + HLSSettings.lowBufferLength);
+          Log.debug("HLSSettings.maxBufferLength=" + HLSSettings.maxBufferLength);
+          Log.debug("HLSSettings.startFromLevel=" + HLSSettings.startFromLevel);
+          Log.debug("HLSSettings.seekFromLevel=" + HLSSettings.seekFromLevel);
+          Log.debug("HLSSettings.flushLiveURLCache=" + HLSSettings.flushLiveURLCache);
+          Log.debug("HLSSettings.seekMode=" + HLSSettings.seekMode);
+          Log.debug("HLSSettings.manifestLoadMaxRetry=" + HLSSettings.manifestLoadMaxRetry);
+          Log.debug("HLSSettings.fragmentLoadMaxRetry=" + HLSSettings.fragmentLoadMaxRetry);
+          Log.debug("HLSSettings.capLevelToStage=" + HLSSettings.capLevelToStage);
+          Log.debug("HLSSettings.maxLevelCappingMode=" + HLSSettings.maxLevelCappingMode);
+
           _src = pSrc;
           _isAutoPlay = pAutoplay;
           load();
