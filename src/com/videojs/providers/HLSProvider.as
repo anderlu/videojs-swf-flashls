@@ -18,6 +18,7 @@ package com.videojs.providers{
   import org.mangui.hls.HLSSettings;
   import org.mangui.hls.HLSPlayStates;
   import org.mangui.hls.utils.Log;
+  import org.mangui.hls.utils.Params2Settings;
 
   public class HLSProvider implements IProvider {
 
@@ -329,19 +330,24 @@ package com.videojs.providers{
          * Should return the most reasonable string representation of the current assets source location.
          */
         public function init(pSrc:Object, pAutoplay:Boolean):void {
-          HLSSettings.logDebug = pSrc.debug;
-          HLSSettings.logDebug2 = pSrc.debug2;
-          HLSSettings.minBufferLength = pSrc.minBufferLength;
-          HLSSettings.lowBufferLength = pSrc.lowBufferLength;
-          HLSSettings.maxBufferLength = pSrc.maxBufferLength;
-          HLSSettings.startFromLevel = pSrc.startFromLevel;
-          HLSSettings.seekFromLevel = pSrc.seekFromLevel;
-          HLSSettings.flushLiveURLCache = pSrc.liveFlushUrlCache;
-          HLSSettings.seekMode = pSrc.seekMode;
-          HLSSettings.manifestLoadMaxRetry = pSrc.manifestLoadMaxRetry;
-          HLSSettings.fragmentLoadMaxRetry = pSrc.fragmentLoadMaxRetry;
-          HLSSettings.capLevelToStage = pSrc.capLevelToStage;
-          HLSSettings.maxLevelCappingMode = pSrc.maxLevelCappingMode;
+          if (pSrc.parameters.hls_live_flushurlcache == undefined){
+            // video-js integration uses a different setting from flashls's default.
+            pSrc.parameters.hls_live_flushurlcache = true;
+          }
+
+          var cfg : Object = pSrc.parameters
+          for (var object : String in cfg) {
+            var subidx : int = object.indexOf("hls_");
+              if (subidx != -1) {
+                // Params2Settings sets Boolean HLSSettings attribute by simple type conversion.
+                // If 'false' is set as a parameter, it's passed as string "false" here and that is converted to Boolean:true.
+                // As workaround, this converts string 'false' to empty string, which will be converted to Boolean:false.
+                if (cfg[object] == "false"){
+                  cfg[object] = "";
+                }
+                Params2Settings.set(object.substr(4), cfg[object]);
+              }
+          }
 
           Log.debug("HLSProvider.init.");
           Log.debug("HLSSettings.logDebug=" + HLSSettings.logDebug);
