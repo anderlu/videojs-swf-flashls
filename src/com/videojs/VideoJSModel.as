@@ -44,7 +44,8 @@ package com.videojs{
         private var _rtmpConnectionURL:String = "";
         private var _rtmpStream:String = "";
         private var _poster:String = "";
-        
+        private var _parameters:Object;
+
         private static var _instance:VideoJSModel;
         
         public function VideoJSModel(pLock:SingletonLock){
@@ -282,6 +283,13 @@ package com.videojs{
         public function set poster(pValue:String):void{
             _poster = pValue;
             broadcastEvent(new VideoJSEvent(VideoJSEvent.POSTER_SET));
+        }
+        
+        public function get parameters():Object{
+            return _parameters;
+        }
+        public function set parameters(pValue:Object):void{
+            _parameters = pValue;
         }
         
         public function get hasEnded():Boolean{
@@ -596,7 +604,8 @@ package com.videojs{
                     }
                     else if(_currentPlaybackType == PlaybackType.HLS){
                         __src = {
-                            m3u8: _src
+                            m3u8: _src,
+                            parameters: _parameters
                         };
                         _provider = new HLSProvider();
                         _provider.attachVideo(_videoReference);

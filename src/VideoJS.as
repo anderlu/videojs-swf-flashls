@@ -101,6 +101,9 @@ package{
         }
         
         private function finish():void{
+
+            // Pass the whole parameters to the model so that any provider may refer it.
+            _app.model.parameters = loaderInfo.parameters;
             
             if(loaderInfo.parameters.mode != undefined){
                 _app.model.mode = loaderInfo.parameters.mode;
@@ -125,7 +128,7 @@ package{
             if(loaderInfo.parameters.poster != undefined && loaderInfo.parameters.poster != ""){
                 _app.model.poster = String(loaderInfo.parameters.poster);
             }
-            
+
             if(loaderInfo.parameters.src != undefined && loaderInfo.parameters.src != ""){
               if (isExternalMSObjectURL(loaderInfo.parameters.src)) {
                 _app.model.srcFromFlashvars = null;
