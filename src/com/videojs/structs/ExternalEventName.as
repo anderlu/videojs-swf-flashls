@@ -22,6 +22,7 @@ package com.videojs.structs{
         public static const ON_RTMP_CONNECT_SUCCESS:String = "rtmpconnected";
         public static const ON_RTMP_RETRY:String = "rtmpretry";
         public static const ON_STAGE_CLICK:String = "stageclick";
+        public static const ON_LEVEL_SWITCH:String = "levelswitch";
         
     }
 }
