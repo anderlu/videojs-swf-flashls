@@ -546,6 +546,51 @@ package com.videojs{
             }
         }
 
+        /**
+         * Returns the number of stream levels that this content has.
+         */
+        public function get numberOfLevels():int
+        {
+            if(_provider){
+                return _provider.numberOfLevels;
+            }
+            return 1;
+        }
+
+        /**
+         * Returns the currently used stream level.
+         */
+        public function get level():int
+        {
+            if(_provider){
+                return _provider.level;
+            }
+            return 0;
+        }
+
+        /**
+         * Select the stream level.
+         * If -1 is specified, it means auto selection.
+         * If a level is specified (0-based index), that level is used and auto selection is disabled.
+         */
+        public function set level(pLevel:int):void
+        {
+            if(_provider){
+                _provider.level = pLevel;
+            }
+        }
+
+        /**
+          * Returns whether auto selection is currently enabled or not.
+          */
+        public function get autoLevelEnabled():Boolean
+        {
+            if(_provider){
+                return _provider.autoLevelEnabled;
+            }
+            return false;
+        }
+
         public function hexToNumber(pHex:String):Number{
             var __number:Number = 0;
             // clean it up

@@ -180,5 +180,26 @@ package com.videojs.providers{
          */
         function die():void;
         
+        /**
+         * Should return the number of stream levels that this content has.
+         */
+        function get numberOfLevels():int;
+
+        /**
+         * Should return the currently used stream level.
+         */
+        function get level():int;
+
+        /**
+         * Select the stream level.
+         * If -1 is specified, it means auto selection.
+         * If a level is specified (0-based index), that level is used and auto selection is disabled.
+         */
+        function set level(pLevel:int):void;
+
+        /**
+          * Should return whether auto level selection is currently enabled or not.
+          */
+        function get autoLevelEnabled():Boolean;
     }
 }
