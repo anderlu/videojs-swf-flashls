@@ -481,6 +481,7 @@ package com.videojs.providers{
         public function attachVideo(pVideo:Video):void {
           _videoReference = pVideo;
           _videoReference.attachNetStream(_hls.stream);
+          _hls.stage = pVideo.stage;
           _videoReference.addEventListener(Event.ENTER_FRAME, _onFrame);
           _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_READY, {ns:_hls.stream as NetStream}));
           return;
