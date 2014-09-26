@@ -13,10 +13,10 @@ package com.videojs.providers{
   import com.videojs.structs.NetworkState;
 
   import org.mangui.hls.HLS;
-  import org.mangui.hls.HLSEvent;
-  import org.mangui.hls.HLSTypes;
+  import org.mangui.hls.event.HLSEvent;
+  import org.mangui.hls.constant.HLSTypes;
   import org.mangui.hls.HLSSettings;
-  import org.mangui.hls.HLSPlayStates;
+  import org.mangui.hls.constant.HLSPlayStates;
   import org.mangui.hls.utils.Log;
   import org.mangui.hls.utils.Params2Settings;
 
@@ -49,7 +49,7 @@ package com.videojs.providers{
         private var _bufferedTime:Number = 0;
 
         public function HLSProvider() {
-          Log.info("flashls 0.1.0");
+          Log.info("flashls 0.3.0");
           _hls = new HLS();
           _model = VideoJSModel.getInstance();
           _metadata = {};
@@ -57,6 +57,7 @@ package com.videojs.providers{
           _hls.addEventListener(HLSEvent.ERROR,_errorHandler);
           _hls.addEventListener(HLSEvent.MANIFEST_LOADED,_manifestHandler);
           _hls.addEventListener(HLSEvent.MEDIA_TIME,_mediaTimeHandler);
+          _hls.addEventListener(HLSEvent.FRAGMENT_PLAYING, _fragmentPlayingHandler);
           _hls.addEventListener(HLSEvent.PLAYBACK_STATE,_stateHandler);
           _hls.addEventListener(HLSEvent.LEVEL_SWITCH,_levelSwitchHandler);
         }
@@ -165,10 +166,9 @@ package com.videojs.providers{
             _model.broadcastEventExternally(ExternalEventName.ON_LEVEL_SWITCH);
         }
 
-        private function _onFrame(event:Event):void
-        {
-          var newWidth:Number = _videoReference.videoWidth;
-          var newHeight:Number =  _videoReference.videoHeight;
+        private function _fragmentPlayingHandler(event : HLSEvent) : void {
+         var newWidth : Number = event.playMetrics.video_width;
+         var newHeight : Number = event.playMetrics.video_height;
           if  (newWidth != 0 && 
                newHeight != 0 && 
                newWidth != _mediaWidth && 
@@ -482,7 +482,6 @@ package com.videojs.providers{
           _videoReference = pVideo;
           _videoReference.attachNetStream(_hls.stream);
           _hls.stage = pVideo.stage;
-          _videoReference.addEventListener(Event.ENTER_FRAME, _onFrame);
           _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_READY, {ns:_hls.stream as NetStream}));
           return;
         }
