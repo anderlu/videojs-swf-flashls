@@ -57,7 +57,6 @@ package com.videojs.providers{
           _hls.addEventListener(HLSEvent.ERROR,_errorHandler);
           _hls.addEventListener(HLSEvent.MANIFEST_LOADED,_manifestHandler);
           _hls.addEventListener(HLSEvent.MEDIA_TIME,_mediaTimeHandler);
-          _hls.addEventListener(HLSEvent.FRAGMENT_PLAYING, _fragmentPlayingHandler);
           _hls.addEventListener(HLSEvent.PLAYBACK_STATE,_stateHandler);
           _hls.addEventListener(HLSEvent.LEVEL_SWITCH,_levelSwitchHandler);
         }
@@ -166,9 +165,10 @@ package com.videojs.providers{
             _model.broadcastEventExternally(ExternalEventName.ON_LEVEL_SWITCH);
         }
 
-        private function _fragmentPlayingHandler(event : HLSEvent) : void {
-         var newWidth : Number = event.playMetrics.video_width;
-         var newHeight : Number = event.playMetrics.video_height;
+        private function _onFrame(event:Event):void
+        {
+          var newWidth:Number = _videoReference.videoWidth;
+          var newHeight:Number =  _videoReference.videoHeight;
           if  (newWidth != 0 && 
                newHeight != 0 && 
                newWidth != _mediaWidth && 
@@ -482,6 +482,7 @@ package com.videojs.providers{
           _videoReference = pVideo;
           _videoReference.attachNetStream(_hls.stream);
           _hls.stage = pVideo.stage;
+          _videoReference.addEventListener(Event.ENTER_FRAME, _onFrame);
           _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_READY, {ns:_hls.stream as NetStream}));
           return;
         }
