@@ -49,7 +49,7 @@ package com.videojs.providers{
         private var _bufferedTime:Number = 0;
 
         public function HLSProvider() {
-          Log.info("flashls 0.3.0");
+          Log.info("flashls 0.3.1");
           _hls = new HLS();
           _model = VideoJSModel.getInstance();
           _metadata = {};
