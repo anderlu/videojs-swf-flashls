@@ -6,6 +6,22 @@ _(none)_
 
 --------------------
 
+## 4.5.1 (2014-10-15)
+* Fixed an issue where changing the source immediately after seeking could cause an error ([view](https://github.com/videojs/video-js-swf/pull/125))
+* Added sanitation for all data that might be passed through the external interface ([view](https://github.com/videojs/video-js-swf/pull/127))
+
+## 4.5.0 (2014-09-29)
+* Buffering and playback event fixes ([view](https://github.com/videojs/video-js-swf/pull/122))
+
+## 4.4.5 (2014-09-25)
+* Fixed sanitation of URLs to special case blob URLs ([view](https://github.com/videojs/video-js-swf/pull/121))
+
+## 4.4.4 (2014-09-22)
+* Added sanitizing of the src param ([view](https://github.com/videojs/video-js-swf/pull/120))
+
+## 4.4.3 (2014-08-14)
+* Rebuild with Flash target-player 10.3 and swf-version 12. ([view](https://github.com/videojs/video-js-swf/issues/113))
+
 ## 4.4.2 (2014-07-11)
 * Fixed networkState reporting to be more accurate after loadstart ([view](https://github.com/videojs/video-js-swf/pull/106))
 

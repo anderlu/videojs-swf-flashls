@@ -1,7 +1,7 @@
 {
   "name": "videojs-swf",
   "description": "The Flash-fallback video player for video.js (http://videojs.com)",
-  "version": "4.4.2",
+  "version": "4.5.1",
   "copyright": "Copyright 2014 Brightcove, Inc. https://github.com/videojs/video-js-swf/blob/master/LICENSE",
   "keywords": [
     "flash",
@@ -17,7 +17,7 @@
   "devDependencies": {
     "async": "~0.2.9",
     "flex-sdk": "4.6.0-0",
-    "video.js": "^4.6.0",
+    "video.js": "^4.9.0",
     "grunt-cli": "~0.1.0",
     "grunt": "~0.4.0",
     "grunt-connect": "~0.2.0",

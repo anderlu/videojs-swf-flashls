@@ -121,8 +121,8 @@ package{
                 _app.model.autoplay = true;
             }
             
-            if(loaderInfo.parameters.preload != undefined && loaderInfo.parameters.preload == "true"){
-                _app.model.preload = true;
+            if(loaderInfo.parameters.preload === "none"){
+                _app.model.preload = false;
             }
             
             if(loaderInfo.parameters.poster != undefined && loaderInfo.parameters.poster != ""){
@@ -318,6 +318,8 @@ package{
                 case "errorEventProxyFunction":
                     _app.model.jsErrorEventProxyName = String(pValue);
                     break;
+                case "autoplay":
+                    _app.model.autoplay = _app.model.humanToBoolean(pValue);
                 case "preload":
                     _app.model.preload = _app.model.humanToBoolean(pValue);
                     break;
@@ -364,7 +366,13 @@ package{
         }
 
         private function openExternalMSObject(pSrc:*):void{
-          ExternalInterface.call('videojs.MediaSource.open', pSrc, ExternalInterface.objectID);
+          var cleanSrc:String
+          if (/^blob:vjs-media-source\/\d+$/.test(pSrc)) {
+            cleanSrc = pSrc;
+          } else {
+            cleanSrc = _app.model.cleanEIString(pSrc);
+          }
+          ExternalInterface.call('videojs.MediaSource.open', cleanSrc, ExternalInterface.objectID);
         }
         
         private function onSrcCalled(pSrc:* = ""):void{

@@ -38,7 +38,7 @@ package com.videojs{
         private var _backgroundAlpha:Number = 0;
         private var _volume:Number = 1;
         private var _autoplay:Boolean = false;
-        private var _preload:Boolean = false;
+        private var _preload:Boolean = true;
         private var _loop:Boolean = false;
         private var _src:String = "";
         private var _rtmpConnectionURL:String = "";
@@ -454,7 +454,8 @@ package com.videojs{
                 if(ExternalInterface.available){
                     var __incomingArgs:* = args as Array;
                     var __newArgs:Array = [_jsEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
-                    ExternalInterface.call.apply(null, __newArgs);
+                    var __sanitizedArgs:Array = cleanObject(__newArgs);
+                    ExternalInterface.call.apply(null, __sanitizedArgs);
                 }
             }
         }
@@ -469,6 +470,7 @@ package com.videojs{
                 if(ExternalInterface.available){
                     var __incomingArgs:* = args as Array;
                     var __newArgs:Array = [_jsErrorEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
+                    var __sanitizedArgs:Array = cleanObject(__newArgs);
                     ExternalInterface.call.apply(null, __newArgs);
                 }
             }
@@ -611,15 +613,42 @@ package com.videojs{
                 return false;
             }
         }
-		
-		/**
-		 * Removes dangerous characters from a user-provided string that will be passed to ExternalInterface.call()
-		 * 
-		 */        
-		public function cleanEIString(pString:String):String{
-			return pString.replace(/[^A-Za-z0-9_.]/gi, "");
-		}
-        
+
+        /**
+         * Removes dangerous characters from a user-provided string that will be passed to ExternalInterface.call()
+         *
+         */
+        public function cleanEIString(pString:String):String{
+            return pString.replace(/[^A-Za-z0-9_.]/gi, "");
+        }
+
+        /**
+         * Recursive function to sanitize an object (or array) before passing to ExternalInterface.call()
+         */
+        private function cleanObject(obj:*):*{
+            if (obj is String) {
+                return obj.split("\\").join("\\\\");
+            } else if (obj is Array) {
+                var __sanitizedArray:Array = new Array();
+
+                for each (var __item in obj){
+                    __sanitizedArray.push(cleanObject(__item));
+                }
+
+                return __sanitizedArray;
+            } else if (typeof(obj) == 'object') {
+                var __sanitizedObject:Object = new Object();
+
+                for (var __i in obj){
+                    __sanitizedObject[__i] = cleanObject(obj[__i]);
+                }
+
+                return __sanitizedObject;
+            } else {
+                return obj;
+            }
+        }
+
         private function initProvider():void{
             if(_provider){
                 _provider.die();
