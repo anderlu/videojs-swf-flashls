@@ -118,27 +118,34 @@ package com.videojs.providers{
                 _readyState = ReadyState.HAVE_METADATA;
                 break;
               case HLSPlayStates.PLAYING_BUFFERING:
-                _isPlaying = true;
                 _isPaused = false;
                 _isEnded = false;
                 _isSeeking = false;
                 _networkState = NetworkState.NETWORK_LOADING;
                 _readyState = ReadyState.HAVE_CURRENT_DATA;
                 _model.broadcastEventExternally(ExternalEventName.ON_BUFFER_EMPTY);
+                if(!_isPlaying) {
+                  _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
+                  _isPlaying = true;
+                }                
                 break;
               case HLSPlayStates.PLAYING:
-                _isPlaying = true;
                 _isPaused = false;
                 _isEnded = false;
                 _isSeeking = false;
                 _networkState = NetworkState.NETWORK_LOADING;
                 _readyState = ReadyState.HAVE_ENOUGH_DATA;
                 _model.broadcastEventExternally(ExternalEventName.ON_BUFFER_FULL);
+                if(!_isPlaying) {
+                  _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
+                  _isPlaying = true;
+                }                
                 _model.broadcastEventExternally(ExternalEventName.ON_CAN_PLAY);
                 _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_START, {info:{}}));
                 break;
               case HLSPlayStates.PAUSED:
                 _isPaused = true;
+                _isPlaying = false;
                 _isEnded = false;
                 _isSeeking = false;
                 _networkState = NetworkState.NETWORK_LOADING;
@@ -148,6 +155,7 @@ package com.videojs.providers{
                 break;
               case HLSPlayStates.PAUSED_BUFFERING:
                 _isPaused = true;
+                _isPlaying = false;
                 _isEnded = false;
                 _networkState = NetworkState.NETWORK_LOADING;
                 _readyState = ReadyState.HAVE_CURRENT_DATA;
@@ -402,12 +410,10 @@ package com.videojs.providers{
           if(_isManifestLoaded) {
             switch(_hlsState) {
               case HLSPlayStates.IDLE:
-                _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
                 _hls.stream.play();
                 break;
               case HLSPlayStates.PAUSED:
               case HLSPlayStates.PAUSED_BUFFERING:
-                _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
                 _hls.stream.resume();
                 break;
               default:
