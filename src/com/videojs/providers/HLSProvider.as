@@ -17,6 +17,7 @@ package com.videojs.providers{
   import org.mangui.hls.constant.HLSTypes;
   import org.mangui.hls.HLSSettings;
   import org.mangui.hls.constant.HLSPlayStates;
+  import org.mangui.hls.constant.HLSSeekStates;
   import org.mangui.hls.utils.Log;
   import org.mangui.hls.utils.Params2Settings;
 
@@ -57,7 +58,8 @@ package com.videojs.providers{
           _hls.addEventListener(HLSEvent.ERROR,_errorHandler);
           _hls.addEventListener(HLSEvent.MANIFEST_LOADED,_manifestHandler);
           _hls.addEventListener(HLSEvent.MEDIA_TIME,_mediaTimeHandler);
-          _hls.addEventListener(HLSEvent.PLAYBACK_STATE,_stateHandler);
+          _hls.addEventListener(HLSEvent.PLAYBACK_STATE,_playbackStateHandler);
+          _hls.addEventListener(HLSEvent.SEEK_STATE,_seekStateHandler);
           _hls.addEventListener(HLSEvent.LEVEL_SWITCH,_levelSwitchHandler);
         }
 
@@ -109,7 +111,7 @@ package com.videojs.providers{
           }
         };
 
-        private function _stateHandler(event:HLSEvent):void {
+        private function _playbackStateHandler(event:HLSEvent):void {
           _hlsState = event.state;
           Log.debug("state:"+ _hlsState);
           switch(event.state) {
@@ -120,7 +122,6 @@ package com.videojs.providers{
               case HLSPlayStates.PLAYING_BUFFERING:
                 _isPaused = false;
                 _isEnded = false;
-                _isSeeking = false;
                 _networkState = NetworkState.NETWORK_LOADING;
                 _readyState = ReadyState.HAVE_CURRENT_DATA;
                 _model.broadcastEventExternally(ExternalEventName.ON_BUFFER_EMPTY);
@@ -132,7 +133,6 @@ package com.videojs.providers{
               case HLSPlayStates.PLAYING:
                 _isPaused = false;
                 _isEnded = false;
-                _isSeeking = false;
                 _networkState = NetworkState.NETWORK_LOADING;
                 _readyState = ReadyState.HAVE_ENOUGH_DATA;
                 _model.broadcastEventExternally(ExternalEventName.ON_BUFFER_FULL);
@@ -147,7 +147,6 @@ package com.videojs.providers{
                 _isPaused = true;
                 _isPlaying = false;
                 _isEnded = false;
-                _isSeeking = false;
                 _networkState = NetworkState.NETWORK_LOADING;
                 _readyState = ReadyState.HAVE_ENOUGH_DATA;
                 _model.broadcastEventExternally(ExternalEventName.ON_BUFFER_FULL);
@@ -163,6 +162,20 @@ package com.videojs.providers{
                 break;
           }
         };
+
+
+        private function _seekStateHandler(event:HLSEvent):void {
+          switch(event.state) {
+            case HLSSeekStates.SEEKED:
+                _isSeeking = false;
+                _model.broadcastEventExternally(ExternalEventName.ON_SEEK_COMPLETE);
+                break;
+            case HLSSeekStates.SEEKING:
+                _isSeeking = true;
+                _model.broadcastEventExternally(ExternalEventName.ON_SEEK_START);
+                break;
+          }
+        }
 
         private function _levelSwitchHandler(event:HLSEvent):void {
             var levelIndex:Number = event.level;
@@ -446,7 +459,6 @@ package com.videojs.providers{
         public function seekBySeconds(pTime:Number):void {
           Log.debug("HLSProvider.seekBySeconds");
           if(_isManifestLoaded) {
-            _isSeeking = true;
             _position = pTime;
             _bufferedTime = _position;
             _hls.stream.seek(pTime);
@@ -459,7 +471,6 @@ package com.videojs.providers{
         public function seekByPercent(pPercent:Number):void {
           Log.debug("HLSProvider.seekByPercent");
           if(_isManifestLoaded) {
-            _isSeeking = true;
             _position = pPercent*_duration;
             _bufferedTime = _position;
             _hls.stream.seek(pPercent*_duration);
