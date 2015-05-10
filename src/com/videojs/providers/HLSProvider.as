@@ -524,7 +524,11 @@ package com.videojs.providers{
         public function abort():void{
             throw "HLSProvider does not support abort";
         }        
-        
+
+        public function discontinuity():void{
+            throw "HLSProvider does not support discontinuities";
+        }
+
         /**
          * Should return the number of stream levels that this content has.
          */

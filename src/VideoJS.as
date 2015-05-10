@@ -1,11 +1,11 @@
 package{
-    
+
     import com.videojs.VideoJSApp;
     import com.videojs.events.VideoJSEvent;
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.Base64;
-    
+
     import flash.display.Sprite;
     import flash.display.StageAlign;
     import flash.display.StageScaleMode;
@@ -20,21 +20,21 @@ package{
     import flash.utils.ByteArray;
     import flash.utils.Timer;
     import flash.utils.setTimeout;
-    
+
     [SWF(backgroundColor="#000000", frameRate="60", width="480", height="270")]
     public class VideoJS extends Sprite{
 
         public const VERSION:String = CONFIG::version;
-        
+
         private var _app:VideoJSApp;
         private var _stageSizeTimer:Timer;
-        
+
         public function VideoJS(){
             _stageSizeTimer = new Timer(250);
             _stageSizeTimer.addEventListener(TimerEvent.TIMER, onStageSizeTimerTick);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
-        
+
         private function init():void{
             // Allow JS calls from other domains
             Security.allowDomain("*");
@@ -44,17 +44,18 @@ package{
                 // we'll want to suppress ANY uncaught debug errors in production (for the sake of ux)
                 // IEventDispatcher(loaderInfo["uncaughtErrorEvents"]).addEventListener("uncaughtError", onUncaughtError);
             }
-            
+
             if(ExternalInterface.available){
                 registerExternalMethods();
             }
-            
+
             _app = new VideoJSApp();
             addChild(_app);
 
             _app.model.stageRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 
             // add content-menu version info
+
             var _ctxVersion:ContextMenuItem = new ContextMenuItem("VideoJS Flash Component v" + VERSION, false, false);
             var _ctxAbout:ContextMenuItem = new ContextMenuItem("Copyright © 2014 Brightcove, Inc.", false, false);
             var _ctxMenu:ContextMenu = new ContextMenu();
@@ -63,15 +64,15 @@ package{
             this.contextMenu = _ctxMenu;
 
         }
-        
+
         private function registerExternalMethods():void{
-            
+
             try{
                 ExternalInterface.addCallback("vjs_appendBuffer", onAppendBufferCalled);
                 ExternalInterface.addCallback("vjs_echo", onEchoCalled);
                 ExternalInterface.addCallback("vjs_endOfStream", onEndOfStreamCalled);
                 ExternalInterface.addCallback("vjs_abort", onAbortCalled);
-
+                ExternalInterface.addCallback("vjs_discontinuity", onDiscontinuityCalled);
                 ExternalInterface.addCallback("vjs_getProperty", onGetPropertyCalled);
                 ExternalInterface.addCallback("vjs_setProperty", onSetPropertyCalled);
                 ExternalInterface.addCallback("vjs_autoplay", onAutoplayCalled);
@@ -93,13 +94,13 @@ package{
                 }
             }
             finally{}
-            
-            
-            
+
+
+
             setTimeout(finish, 50);
 
         }
-        
+
         private function finish():void{
 
             // Pass the whole parameters to the model so that any provider may refer it.
@@ -108,23 +109,26 @@ package{
             if(loaderInfo.parameters.mode != undefined){
                 _app.model.mode = loaderInfo.parameters.mode;
             }
-            
-            if(loaderInfo.parameters.eventProxyFunction != undefined){
+
+            // Hard coding these in for now until we can come up with a better solution for 5.0 to avoid XSS.
+            _app.model.jsEventProxyName = 'videojs.Flash.onEvent';
+            _app.model.jsErrorEventProxyName = 'videojs.Flash.onError';
+
+            /*if(loaderInfo.parameters.eventProxyFunction != undefined){
                 _app.model.jsEventProxyName = loaderInfo.parameters.eventProxyFunction;
             }
-            
+
             if(loaderInfo.parameters.errorEventProxyFunction != undefined){
                 _app.model.jsErrorEventProxyName = loaderInfo.parameters.errorEventProxyFunction;
-            }
-            
+            }*/
+
             if(loaderInfo.parameters.autoplay != undefined && loaderInfo.parameters.autoplay == "true"){
                 _app.model.autoplay = true;
             }
-            
             if(loaderInfo.parameters.preload === "none"){
                 _app.model.preload = false;
             }
-            
+
             if(loaderInfo.parameters.poster != undefined && loaderInfo.parameters.poster != ""){
                 _app.model.poster = String(loaderInfo.parameters.poster);
             }
@@ -145,19 +149,22 @@ package{
                 _app.model.rtmpStream = loaderInfo.parameters.rtmpStream;
               }
             }
-            
-            if(loaderInfo.parameters.readyFunction != undefined){
-                try{
-                    ExternalInterface.call(_app.model.cleanEIString(loaderInfo.parameters.readyFunction), ExternalInterface.objectID);
+
+            // Hard coding this in for now until we can come up with a better solution for 5.0 to avoid XSS.
+            ExternalInterface.call('videojs.Flash.onReady', ExternalInterface.objectID);
+
+            /*if(loaderInfo.parameters.readyFunction != undefined){
+              try{
+                ExternalInterface.call(_app.model.cleanEIString(loaderInfo.parameters.readyFunction), ExternalInterface.objectID);
+              }
+              catch(e:Error){
+                if (loaderInfo.parameters.debug != undefined && loaderInfo.parameters.debug == "true") {
+                  throw new Error(e.message);
                 }
-                catch(e:Error){
-                    if (loaderInfo.parameters.debug != undefined && loaderInfo.parameters.debug == "true") {
-                        throw new Error(e.message);
-                    }
-                }
-            }
+              }
+            }*/
         }
-        
+
         private function onAddedToStage(e:Event):void{
             stage.addEventListener(MouseEvent.CLICK, onStageClick);
             stage.addEventListener(Event.RESIZE, onStageResize);
@@ -165,7 +172,7 @@ package{
             stage.align = StageAlign.TOP_LEFT;
             _stageSizeTimer.start();
         }
-        
+
         private function onStageSizeTimerTick(e:TimerEvent):void{
             if(stage.stageWidth > 0 && stage.stageHeight > 0){
                 _stageSizeTimer.stop();
@@ -173,7 +180,7 @@ package{
                 init();
             }
         }
-        
+
         private function onStageResize(e:Event):void{
             if(_app != null){
                 _app.model.stageRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
@@ -187,7 +194,7 @@ package{
             // write the bytes to the provider
             _app.model.appendBuffer(bytes);
         }
-        
+
         private function onEchoCalled(pResponse:* = null):*{
             return pResponse;
         }
@@ -199,7 +206,11 @@ package{
         private function onAbortCalled():*{
             _app.model.abort();
         }
-        
+
+        private function onDiscontinuityCalled():*{
+            _app.model.discontinuity();
+        }
+
         private function onGetPropertyCalled(pPropertyName:String = ""):*{
 
             switch(pPropertyName){
@@ -210,7 +221,7 @@ package{
                 case "loop":
                     return _app.model.loop;
                 case "preload":
-                    return _app.model.preload;    
+                    return _app.model.preload;
                     break;
                 case "metadata":
                     return _app.model.metadata;
@@ -280,7 +291,7 @@ package{
                     break;
                 case "rtmpConnection":
                     return _app.model.rtmpConnectionURL;
-                    break;     
+                    break;
                 case "rtmpStream":
                     return _app.model.rtmpStream;
                     break;                                       
@@ -296,8 +307,8 @@ package{
             }
             return null;
         }
-        
-        private function onSetPropertyCalled(pPropertyName:String = "", pValue:* = null):void{            
+
+        private function onSetPropertyCalled(pPropertyName:String = "", pValue:* = null):void{
             switch(pPropertyName){
                 case "duration":
                     _app.model.duration = Number(pValue);
@@ -356,7 +367,7 @@ package{
                     break;
             }
         }
-        
+
         private function onAutoplayCalled(pAutoplay:* = false):void{
           _app.model.autoplay = _app.model.humanToBoolean(pAutoplay);
         }
@@ -374,7 +385,7 @@ package{
           }
           ExternalInterface.call('videojs.MediaSource.open', cleanSrc, ExternalInterface.objectID);
         }
-        
+
         private function onSrcCalled(pSrc:* = ""):void{
           // check if an external media source object will provide the video data
           if (isExternalMSObjectURL(pSrc)) {
@@ -389,27 +400,27 @@ package{
             _app.model.src = String(pSrc);
           }
         }
-        
+
         private function onLoadCalled():void{
             _app.model.load();
         }
-        
+
         private function onPlayCalled():void{
             _app.model.play();
         }
-        
+
         private function onPauseCalled():void{
             _app.model.pause();
         }
-        
+
         private function onResumeCalled():void{
             _app.model.resume();
         }
-        
+
         private function onStopCalled():void{
             _app.model.stop();
         }
-        
+
         private function onUncaughtError(e:Event):void{
             e.preventDefault();
         }
@@ -417,6 +428,6 @@ package{
         private function onStageClick(e:MouseEvent):void{
             _app.model.broadcastEventExternally(ExternalEventName.ON_STAGE_CLICK);
         }
-        
+
     }
 }

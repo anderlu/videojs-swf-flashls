@@ -1,5 +1,5 @@
 package com.videojs{
-    
+
     import com.videojs.events.VideoJSEvent;
     import com.videojs.events.VideoPlaybackEvent;
     import com.videojs.providers.HTTPAudioProvider;
@@ -11,7 +11,7 @@ package com.videojs{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.PlaybackType;
     import com.videojs.structs.PlayerMode;
-    
+
     import flash.events.Event;
     import flash.events.EventDispatcher;
     import flash.external.ExternalInterface;
@@ -20,7 +20,7 @@ package com.videojs{
     import flash.media.SoundTransform;
     import flash.media.Video;
     import flash.utils.ByteArray;
-    
+
     public class VideoJSModel extends EventDispatcher{
 
         private var _masterVolume:SoundTransform;
@@ -28,7 +28,7 @@ package com.videojs{
         private var _videoReference:Video;
         private var _lastSetVolume:Number = 1;
         private var _provider:IProvider;
-        
+
         // accessible properties
         private var _mode:String;
         private var _stageRect:Rectangle;
@@ -47,7 +47,7 @@ package com.videojs{
         private var _parameters:Object;
 
         private static var _instance:VideoJSModel;
-        
+
         public function VideoJSModel(pLock:SingletonLock){
             if (!pLock is SingletonLock) {
                 throw new Error("Invalid Singleton access.  Use VideoJSModel.getInstance()!");
@@ -59,18 +59,19 @@ package com.videojs{
                 _stageRect = new Rectangle(0, 0, 100, 100);
             }
         }
-        
+
         public static function getInstance():VideoJSModel {
             if (_instance === null){
                 _instance = new VideoJSModel(new SingletonLock());
             }
             return _instance;
         }
-        
+
         public function get mode():String{
             return _mode;
         }
-        public function set mode(pMode:String):void{
+
+        public function set mode(pMode:String):void {
             switch(pMode){
                 case PlayerMode.VIDEO:
                     _mode = pMode;
@@ -82,29 +83,29 @@ package com.videojs{
                     broadcastEventExternally(ExternalErrorEventName.UNSUPPORTED_MODE);
             }
         }
-        
+
         public function get jsEventProxyName():String{
             return _jsEventProxyName;
         }
-        public function set jsEventProxyName(pName:String):void{
+        public function set jsEventProxyName(pName:String):void {
             _jsEventProxyName = cleanEIString(pName);
         }
-        
+
         public function get jsErrorEventProxyName():String{
             return _jsErrorEventProxyName;
         }
-        public function set jsErrorEventProxyName(pName:String):void{
+        public function set jsErrorEventProxyName(pName:String):void {
             _jsErrorEventProxyName = cleanEIString(pName);
         }
-        
+
         public function get stageRect():Rectangle{
             return _stageRect;
         }
-        public function set stageRect(pRect:Rectangle):void{
+        public function set stageRect(pRect:Rectangle):void {
             _stageRect = pRect;
         }
 
-        public function appendBuffer(bytes:ByteArray):void{
+        public function appendBuffer(bytes:ByteArray):void {
             _provider.appendBuffer(bytes);
         }
 
@@ -115,11 +116,15 @@ package com.videojs{
         public function abort():void {
             _provider.abort();
         }
-        
+
+        public function discontinuity():void {
+            _provider.discontinuity();
+        }
+
         public function get backgroundColor():Number{
             return _backgroundColor;
         }
-        public function set backgroundColor(pColor:Number):void{
+        public function set backgroundColor(pColor:Number):void {
             if(pColor < 0){
                 _backgroundColor = 0;
             }
@@ -128,11 +133,11 @@ package com.videojs{
                 broadcastEvent(new VideoPlaybackEvent(VideoJSEvent.BACKGROUND_COLOR_SET, {}));
             }
         }
-        
+
         public function get backgroundAlpha():Number{
             return _backgroundAlpha;
         }
-        public function set backgroundAlpha(pAlpha:Number):void{
+        public function set backgroundAlpha(pAlpha:Number):void {
             if(pAlpha < 0){
                 _backgroundAlpha = 0;
             }
@@ -140,25 +145,25 @@ package com.videojs{
                 _backgroundAlpha = pAlpha;
             }
         }
-        
+
         public function get videoReference():Video{
             return _videoReference;
         }
-        public function set videoReference(pVideo:Video):void{
+        public function set videoReference(pVideo:Video):void {
             _videoReference = pVideo;
         }
-        
+
         public function get metadata():Object{
             if(_provider){
                 return _provider.metadata;
             }
             return {};
         }
-        
+
         public function get volume():Number{
             return _volume;
         }
-        public function set volume(pVolume:Number):void{
+        public function set volume(pVolume:Number):void {
             if(pVolume >= 0 && pVolume <= 1){
                 _volume = pVolume;
             }
@@ -170,7 +175,7 @@ package com.videojs{
             _lastSetVolume = _volume;
             broadcastEventExternally(ExternalEventName.ON_VOLUME_CHANGE, _volume);
         }
-        
+
         public function get duration():Number{
             if(_provider){
                 return _provider.duration;
@@ -183,21 +188,21 @@ package com.videojs{
                 (_provider as HTTPVideoProvider).duration = value;
             }
         }
-        
+
         public function get autoplay():Boolean{
             return _autoplay;
         }
-        public function set autoplay(pValue:Boolean):void{
+        public function set autoplay(pValue:Boolean):void {
             _autoplay = pValue;
         }
-        
+
         public function get src():String{
             if(_provider){
                 return _provider.srcAsString;
             }
             return _src;
         }
-        public function set src(pValue:String):void{
+        public function set src(pValue:String):void {
             _src = pValue;
             _rtmpConnectionURL = "";
             _rtmpStream = "";
@@ -218,19 +223,19 @@ package com.videojs{
                 _provider.load();
             }
         }
-        
+
         public function get rtmpConnectionURL():String{
             return _rtmpConnectionURL;
         }
-        public function set rtmpConnectionURL(pURL:String):void{
+        public function set rtmpConnectionURL(pURL:String):void {
             _src = "";
             _rtmpConnectionURL = pURL;
         }
-        
+
         public function get rtmpStream():String{
             return _rtmpStream;
         }
-        public function set rtmpStream(pValue:String):void{
+        public function set rtmpStream(pValue:String):void {
             _src = "";
             _rtmpStream = pValue;
             broadcastEventExternally(ExternalEventName.ON_SRC_CHANGE, _src);
@@ -250,15 +255,15 @@ package com.videojs{
                 play();
             }
         }
-        
+
         /**
          * This is used to distinguish a _src that's being set from incoming flashvars,
          * and mirrors the normal setter WITHOUT dispatching the 'onsrcchange' event.
-         * 
+         *
          * @param pValue
-         * 
-         */        
-        public function set srcFromFlashvars(pValue:String):void{
+         *
+         */
+        public function set srcFromFlashvars(pValue:String):void {
             _src = pValue;
             // detect HLS by checking the extension of src
 			if(_src.search(/(https?|file)\:\/\/.*?\.m3u8(\?.*)?/i) != -1){
@@ -275,12 +280,12 @@ package com.videojs{
                 _provider.load();
             }
         }
-        
-        
+
+
         public function get poster():String{
             return _poster;
         }
-        public function set poster(pValue:String):void{
+        public function set poster(pValue:String):void {
             _poster = pValue;
             broadcastEvent(new VideoJSEvent(VideoJSEvent.POSTER_SET));
         }
@@ -298,23 +303,23 @@ package com.videojs{
             }
             return false;
         }
-        
+
         /**
-         * Returns the playhead position of the current video, in seconds. 
-         * @return 
-         * 
-         */        
+         * Returns the playhead position of the current video, in seconds.
+         * @return
+         *
+         */
         public function get time():Number{
             if(_provider){
                 return _provider.time;
             }
             return 0;
         }
-        
+
         public function get muted():Boolean{
             return (_volume == 0);
         }
-        public function set muted(pValue:Boolean):void{
+        public function set muted(pValue:Boolean):void {
             if(pValue){
                 var __lastSetVolume:Number = _lastSetVolume;
                 volume = 0;
@@ -324,21 +329,21 @@ package com.videojs{
                 volume = _lastSetVolume;
             }
         }
-        
+
         public function get seeking():Boolean{
             if(_provider){
                 return _provider.seeking;
             }
             return false;
         }
-        
+
         public function get networkState():int{
             if(_provider){
                 return _provider.networkState;
             }
             return 0;
         }
-        
+
         public function get readyState():int{
             if(_provider){
                 return _provider.readyState;
@@ -346,32 +351,32 @@ package com.videojs{
             return 0;
 
         }
-        
+
         public function get preload():Boolean{
             return _preload;
         }
-        public function set preload(pValue:Boolean):void{
+        public function set preload(pValue:Boolean):void {
             _preload = pValue;
         }
-        
+
         public function get loop():Boolean{
             return _loop;
         }
-        public function set loop(pValue:Boolean):void{
+        public function set loop(pValue:Boolean):void {
             _loop = pValue;
         }
-        
+
         public function get buffered():Number{
             if(_provider){
                 return _provider.buffered;
             }
             return 0;
         }
-        
+
         /**
          * Returns the total number of bytes loaded for the current video.
-         * @return 
-         * 
+         * @return
+         *
          */
         public function get bufferedBytesEnd():int{
             if(_provider){
@@ -379,11 +384,11 @@ package com.videojs{
             }
             return 0;
         }
-        
+
         /**
          * Returns the total size of the current video, in bytes.
-         * @return 
-         * 
+         * @return
+         *
          */
         public function get bytesTotal():int{
             if(_provider){
@@ -391,12 +396,12 @@ package com.videojs{
             }
             return 0;
         }
-        
+
         /**
          * Returns the pixel width of the currently playing video as interpreted by the decompressor.
-         * @return 
-         * 
-         */        
+         * @return
+         *
+         */
         public function get videoWidth():int{
             if(_videoReference != null){
                 return _videoReference.videoWidth;
@@ -405,12 +410,12 @@ package com.videojs{
                 return 0;
             }
         }
-        
+
         /**
-         * Returns the pixel height of the currently playing video as interpreted by the decompressor. 
-         * @return 
-         * 
-         */        
+         * Returns the pixel height of the currently playing video as interpreted by the decompressor.
+         * @return
+         *
+         */
         public function get videoHeight():int{
             if(_videoReference != null){
                 return _videoReference.videoHeight;
@@ -419,37 +424,37 @@ package com.videojs{
                 return 0;
             }
         }
-        
+
         public function get playing():Boolean{
             if(_provider){
                 return _provider.playing;
             }
             return false;
         }
-        
+
         public function get paused():Boolean{
             if(_provider){
                 return _provider.paused;
             }
-            return false;
+            return true;
         }
 
         /**
          * Allows this model to act as a centralized event bus to which other classes can subscribe.
-         *  
+         *
          * @param e
-         * 
-         */        
-        public function broadcastEvent(e:Event):void{
-            dispatchEvent(e); 
+         *
+         */
+        public function broadcastEvent(e:Event):void {
+            dispatchEvent(e);
         }
-        
+
         /**
          * This is an internal proxy that allows instances in this swf to broadcast events to a JS proxy function, if one is defined.
          * @param args
-         * 
-         */        
-        public function broadcastEventExternally(... args):void{
+         *
+         */
+        public function broadcastEventExternally(... args):void {
             if(_jsEventProxyName != ""){
                 if(ExternalInterface.available){
                     var __incomingArgs:* = args as Array;
@@ -459,13 +464,13 @@ package com.videojs{
                 }
             }
         }
-        
+
         /**
          * This is an internal proxy that allows instances in this swf to broadcast error events to a JS proxy function, if one is defined.
          * @param args
-         * 
-         */        
-        public function broadcastErrorEventExternally(... args):void{
+         *
+         */
+        public function broadcastErrorEventExternally(... args):void {
             if(_jsErrorEventProxyName != ""){
                 if(ExternalInterface.available){
                     var __incomingArgs:* = args as Array;
@@ -475,74 +480,74 @@ package com.videojs{
                 }
             }
         }
-        
+
         /**
-         * Loads the video in a paused state. 
-         * 
-         */        
-        public function load():void{
+         * Loads the video in a paused state.
+         *
+         */
+        public function load():void {
             if(_provider){
                 _provider.load();
             }
         }
-        
+
         /**
          * Loads the video and begins playback immediately.
-         * 
-         */        
-        public function play():void{
+         *
+         */
+        public function play():void {
             if(_provider){
                 _provider.play();
             }
         }
-        
+
         /**
-         * Pauses video playback. 
-         * 
-         */        
-        public function pause():void{
+         * Pauses video playback.
+         *
+         */
+        public function pause():void {
             if(_provider){
                 _provider.pause();
             }
         }
-        
+
         /**
-         * Resumes video playback. 
-         * 
-         */        
-        public function resume():void{
+         * Resumes video playback.
+         *
+         */
+        public function resume():void {
             if(_provider){
                 _provider.resume();
             }
         }
-        
+
         /**
-         * Seeks the currently playing video to the closest keyframe prior to the value provided. 
+         * Seeks the currently playing video to the closest keyframe prior to the value provided.
          * @param pValue
-         * 
-         */        
-        public function seekBySeconds(pValue:Number):void{
+         *
+         */
+        public function seekBySeconds(pValue:Number):void {
             if(_provider){
                 _provider.seekBySeconds(pValue);
             }
         }
-        
+
         /**
-         * Seeks the currently playing video to the closest keyframe prior to the percent value provided. 
+         * Seeks the currently playing video to the closest keyframe prior to the percent value provided.
          * @param pValue A float from 0 to 1 that represents the desired seek percent.
-         * 
-         */        
-        public function seekByPercent(pValue:Number):void{
+         *
+         */
+        public function seekByPercent(pValue:Number):void {
             if(_provider){
                 _provider.seekByPercent(pValue);
             }
         }
-        
+
         /**
          * Stops video playback, clears the video element, and stops any loading proceeses.
-         * 
-         */        
-        public function stop():void{
+         *
+         */
+        public function stop():void {
             if(_provider){
                 _provider.stop();
             }
@@ -604,7 +609,7 @@ package com.videojs{
             }
             return __number;
         }
-        
+
         public function humanToBoolean(pValue:*):Boolean{
             if(String(pValue) == "true" || String(pValue) == "1"){
                 return true;
@@ -649,7 +654,7 @@ package com.videojs{
             }
         }
 
-        private function initProvider():void{
+        private function initProvider():void {
             if(_provider){
                 _provider.die();
                 _provider = null;
@@ -658,7 +663,7 @@ package com.videojs{
             // We need to determine which provider to load, based on the values of our exposed properties.
             switch(_mode){
                 case PlayerMode.VIDEO:
-                    
+
                     if(_currentPlaybackType == PlaybackType.HTTP){
                         __src = {
                             path: _src
@@ -703,15 +708,15 @@ package com.videojs{
 
 
 /**
- * @internal This is a private class declared outside of the package 
+ * @internal This is a private class declared outside of the package
  * that is only accessible to classes inside of this file
- * file.  Because of that, no outside code is able to get a 
- * reference to this class to pass to the constructor, which 
+ * file.  Because of that, no outside code is able to get a
+ * reference to this class to pass to the constructor, which
  * enables us to prevent outside instantiation.
- * 
+ *
  * We do this because Actionscript doesn't allow private constructors,
  * which prevents us from creating a "true" singleton.
- * 
+ *
  * @private
  */
 class SingletonLock {}
