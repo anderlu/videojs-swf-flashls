@@ -67,6 +67,7 @@ package com.videojs.providers{
           if(!_loop){
             _isEnded = true;
             _isPaused = true;
+            _isPlaying = false;
             _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_CLOSE, {}));
             _model.broadcastEventExternally(ExternalEventName.ON_PAUSE);
             _model.broadcastEventExternally(ExternalEventName.ON_PLAYBACK_COMPLETE);
