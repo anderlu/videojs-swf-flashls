@@ -50,7 +50,7 @@ package com.videojs.providers{
         private var _bufferedTime:Number = 0;
 
         public function HLSProvider() {
-          Log.info("https://github.com/mangui/flashls/releases/tag/v0.3.5");
+          Log.info("https://github.com/mangui/flashls/releases/tag/v0.4.0.6");
           _hls = new HLS();
           _model = VideoJSModel.getInstance();
           _metadata = {};
@@ -67,6 +67,7 @@ package com.videojs.providers{
           if(!_loop){
             _isEnded = true;
             _isPaused = true;
+            _isPlaying = false;
             _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_CLOSE, {}));
             _model.broadcastEventExternally(ExternalEventName.ON_PAUSE);
             _model.broadcastEventExternally(ExternalEventName.ON_PLAYBACK_COMPLETE);
@@ -524,7 +525,11 @@ package com.videojs.providers{
         public function abort():void{
             throw "HLSProvider does not support abort";
         }        
-        
+
+        public function discontinuity():void{
+            throw "HLSProvider does not support discontinuities";
+        }
+
         /**
          * Should return the number of stream levels that this content has.
          */

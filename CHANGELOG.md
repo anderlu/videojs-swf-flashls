@@ -6,6 +6,24 @@ _(none)_
 
 --------------------
 
+## 4.6.1 (2015-04-22)
+* @bclwhitaker append END_SEQUENCE properly in data generation mode ([view](https://github.com/videojs/video-js-swf/pull/152))
+
+## 4.6.0 (2015-04-16)
+* Add vjs_discontinuity ([view](https://github.com/videojs/video-js-swf/pull/150))
+* Don't call resume() on NetstreamPlayStart ([view](https://github.com/videojs/video-js-swf/pull/147))
+
+## 4.5.4 (2015-03-17)
+* Improved handling of the paused state, and the loadstart and canplay events ([view](https://github.com/videojs/video-js-swf/pull/139))
+* Fixed a potential XSS issue with the swf event callbacks ([view](https://github.com/videojs/video-js-swf/pull/143))
+* Prevented pause from firing after eneded ([view](https://github.com/videojs/video-js-swf/pull/144))
+
+## 4.5.3 (2015-01-22)
+* Paused should be true before a source has been set by default
+
+## 4.5.2 (2014-12-04)
+* Fixed an issue where Flash would crash when switching sources quickly ([view](https://github.com/videojs/video-js-swf/pull/131))
+
 ## 4.5.1 (2014-10-15)
 * Fixed an issue where changing the source immediately after seeking could cause an error ([view](https://github.com/videojs/video-js-swf/pull/125))
 * Added sanitation for all data that might be passed through the external interface ([view](https://github.com/videojs/video-js-swf/pull/127))
