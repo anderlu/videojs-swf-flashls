@@ -21,6 +21,8 @@ package{
     import flash.utils.Timer;
     import flash.utils.setTimeout;
 
+    import org.mangui.hls.HLSSettings;
+
     [SWF(backgroundColor="#000000", frameRate="60", width="480", height="270")]
     public class VideoJS extends Sprite{
 
@@ -30,6 +32,9 @@ package{
         private var _stageSizeTimer:Timer;
 
         public function VideoJS(){
+
+            HLSSettings.useHardwareVideoDecoder = true;
+            
             _stageSizeTimer = new Timer(250);
             _stageSizeTimer.addEventListener(TimerEvent.TIMER, onStageSizeTimerTick);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -105,7 +110,7 @@ package{
 
             // Pass the whole parameters to the model so that any provider may refer it.
             _app.model.parameters = loaderInfo.parameters;
-            
+
             if(loaderInfo.parameters.mode != undefined){
                 _app.model.mode = loaderInfo.parameters.mode;
             }
@@ -294,7 +299,7 @@ package{
                     break;
                 case "rtmpStream":
                     return _app.model.rtmpStream;
-                    break;                                       
+                    break;
                 case "numberOfLevels":
                     return _app.model.numberOfLevels;
                     break;

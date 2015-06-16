@@ -129,7 +129,7 @@ package com.videojs.providers{
                 if(!_isPlaying) {
                   _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
                   _isPlaying = true;
-                }                
+                }
                 break;
               case HLSPlayStates.PLAYING:
                 _isPaused = false;
@@ -140,7 +140,7 @@ package com.videojs.providers{
                 if(!_isPlaying) {
                   _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
                   _isPlaying = true;
-                }                
+                }
                 _model.broadcastEventExternally(ExternalEventName.ON_CAN_PLAY);
                 _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_START, {info:{}}));
                 break;
@@ -191,9 +191,9 @@ package com.videojs.providers{
         {
           var newWidth:Number = _videoReference.videoWidth;
           var newHeight:Number =  _videoReference.videoHeight;
-          if  (newWidth != 0 && 
-               newHeight != 0 && 
-               newWidth != _mediaWidth && 
+          if  (newWidth != 0 &&
+               newHeight != 0 &&
+               newWidth != _mediaWidth &&
                newHeight != _mediaHeight)
           {
             _mediaWidth = newWidth;
@@ -516,7 +516,7 @@ package com.videojs.providers{
             _videoReference.clear();
           }
         }
-        
+
 
         public function endOfStream():void{
             throw "HLSProvider does not support endOfStream";
@@ -524,7 +524,7 @@ package com.videojs.providers{
 
         public function abort():void{
             throw "HLSProvider does not support abort";
-        }        
+        }
 
         public function discontinuity():void{
             throw "HLSProvider does not support discontinuities";
@@ -543,7 +543,7 @@ package com.videojs.providers{
          */
         public function get level():int
         {
-            return _hls.level;
+            return _hls['level'];
         }
 
         /**
@@ -553,7 +553,7 @@ package com.videojs.providers{
          */
         public function set level(pLevel:int):void
         {
-            _hls.level = pLevel;
+            _hls['level'] = pLevel;
 
             // For reflecting new level from the next segment. Otherwise, new setting is applied only after currently buffered data is gone.
             if (!isNaN(_position) && pLevel != -1) {
@@ -566,7 +566,7 @@ package com.videojs.providers{
           */
         public function get autoLevelEnabled():Boolean
         {
-            return _hls.autolevel;
+            return _hls['autolevel'];
         }
     }
 }
