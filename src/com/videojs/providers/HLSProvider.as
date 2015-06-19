@@ -50,7 +50,7 @@ package com.videojs.providers{
         private var _bufferedTime:Number = 0;
 
         public function HLSProvider() {
-          Log.info("https://github.com/mangui/flashls/releases/tag/v0.4.0.6");
+          Log.info("https://github.com/mangui/flashls/releases/tag/v0.4.1.1");
           _hls = new HLS();
           _model = VideoJSModel.getInstance();
           _metadata = {};
