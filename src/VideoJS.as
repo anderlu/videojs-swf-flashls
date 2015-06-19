@@ -38,6 +38,10 @@ package{
             HLSSettings.maxBufferLength = 120;
             HLSSettings.useHardwareVideoDecoder = true;
 
+            ExternalInterface.call('console.log', 'HLSSettings.capLevelToStage: ' + HLSSettings.capLevelToStage);
+            ExternalInterface.call('console.log', 'HLSSettings.maxBufferLength: ' + HLSSettings.maxBufferLength);
+            ExternalInterface.call('console.log', 'HLSSettings.useHardwareVideoDecoder: ' + HLSSettings.useHardwareVideoDecoder);
+
             _stageSizeTimer = new Timer(250);
             _stageSizeTimer.addEventListener(TimerEvent.TIMER, onStageSizeTimerTick);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
