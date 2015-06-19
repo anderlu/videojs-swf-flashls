@@ -33,8 +33,10 @@ package{
 
         public function VideoJS(){
 
+            HLSSettings.capLevelToStage = true;
+            HLSSettings.maxBufferLength = 120;
             HLSSettings.useHardwareVideoDecoder = true;
-            
+
             _stageSizeTimer = new Timer(250);
             _stageSizeTimer.addEventListener(TimerEvent.TIMER, onStageSizeTimerTick);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
