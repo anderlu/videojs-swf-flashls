@@ -21,8 +21,6 @@ package{
     import flash.utils.Timer;
     import flash.utils.setTimeout;
 
-    import org.mangui.hls.HLSSettings;
-
     [SWF(backgroundColor="#000000", frameRate="60", width="480", height="270")]
     public class VideoJS extends Sprite{
 
@@ -32,15 +30,6 @@ package{
         private var _stageSizeTimer:Timer;
 
         public function VideoJS(){
-
-            ExternalInterface.call('console.log', 'verse videojs-swf');
-            HLSSettings.capLevelToStage = true;
-            HLSSettings.maxBufferLength = 25;
-            HLSSettings.useHardwareVideoDecoder = true;
-
-            ExternalInterface.call('console.log', 'HLSSettings.capLevelToStage: ' + HLSSettings.capLevelToStage);
-            ExternalInterface.call('console.log', 'HLSSettings.maxBufferLength: ' + HLSSettings.maxBufferLength);
-            ExternalInterface.call('console.log', 'HLSSettings.useHardwareVideoDecoder: ' + HLSSettings.useHardwareVideoDecoder);
 
             _stageSizeTimer = new Timer(250);
             _stageSizeTimer.addEventListener(TimerEvent.TIMER, onStageSizeTimerTick);
