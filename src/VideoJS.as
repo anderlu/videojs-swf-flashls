@@ -35,7 +35,7 @@ package{
 
             ExternalInterface.call('console.log', 'verse videojs-swf');
             HLSSettings.capLevelToStage = true;
-            HLSSettings.maxBufferLength = 120;
+            HLSSettings.maxBufferLength = 25;
             HLSSettings.useHardwareVideoDecoder = true;
 
             ExternalInterface.call('console.log', 'HLSSettings.capLevelToStage: ' + HLSSettings.capLevelToStage);
