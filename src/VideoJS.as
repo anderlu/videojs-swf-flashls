@@ -30,6 +30,7 @@ package{
         private var _stageSizeTimer:Timer;
 
         public function VideoJS(){
+
             _stageSizeTimer = new Timer(250);
             _stageSizeTimer.addEventListener(TimerEvent.TIMER, onStageSizeTimerTick);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -105,7 +106,7 @@ package{
 
             // Pass the whole parameters to the model so that any provider may refer it.
             _app.model.parameters = loaderInfo.parameters;
-            
+
             if(loaderInfo.parameters.mode != undefined){
                 _app.model.mode = loaderInfo.parameters.mode;
             }
@@ -294,7 +295,7 @@ package{
                     break;
                 case "rtmpStream":
                     return _app.model.rtmpStream;
-                    break;                                       
+                    break;
                 case "numberOfLevels":
                     return _app.model.numberOfLevels;
                     break;
