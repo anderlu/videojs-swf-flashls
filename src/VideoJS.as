@@ -126,8 +126,9 @@ package{
             if(loaderInfo.parameters.autoplay != undefined && loaderInfo.parameters.autoplay == "true"){
                 _app.model.autoplay = true;
             }
-            if(loaderInfo.parameters.preload === "none"){
-                _app.model.preload = false;
+
+            if(loaderInfo.parameters.preload != undefined && loaderInfo.parameters.preload != ""){
+                _app.model.preload = String(loaderInfo.parameters.preload);
             }
 
             if(loaderInfo.parameters.poster != undefined && loaderInfo.parameters.poster != ""){
@@ -332,8 +333,12 @@ package{
                     break;
                 case "autoplay":
                     _app.model.autoplay = _app.model.humanToBoolean(pValue);
+                    if (_app.model.autoplay) {
+                        _app.model.preload = "auto";
+                    }
+                    break;
                 case "preload":
-                    _app.model.preload = _app.model.humanToBoolean(pValue);
+                    _app.model.preload = String(pValue);
                     break;
                 case "poster":
                     _app.model.poster = String(pValue);
