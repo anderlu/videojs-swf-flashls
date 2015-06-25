@@ -43,7 +43,6 @@ package com.videojs.providers{
         private var _loadStarted:Boolean = false;
         private var _loadCompleted:Boolean = false;
         private var _loadErrored:Boolean = false;
-        private var _pauseOnStart:Boolean = false;
         private var _pausePending:Boolean = false;
         private var _onmetadadataFired:Boolean = false;
 
@@ -277,27 +276,28 @@ package com.videojs.providers{
             _loadErrored = false;
             _loadStarted = false;
             _loadCompleted = false;
-            if (_model.preload) {
+            if (_model.preload == "auto") {
               initNetConnection();
             }
         }
 
-        public function load():void{
-            _pauseOnStart = true;
-            _playbackStarted = false;
-            initNetConnection();
+        public function load():void {
+            if(!_loadStarted){
+                _playbackStarted = false;
+                initNetConnection();
+            }
         }
 
         public function play():void{
             // if this is a fresh playback request
             if(!_loadStarted){
-                _pauseOnStart = false;
-                _playbackStarted = false;
                 _metadata = {};
-                initNetConnection();
-            }
-            // if the asset is already loading
-            else{
+                _model.addEventListener(VideoPlaybackEvent.ON_STREAM_READY, function():void{
+                    play();
+                });
+                load();
+            } else {
+                // if the asset is already loading
                 if (_hasEnded) {
                   _hasEnded = false;
                   _ns.seek(0);
@@ -397,6 +397,8 @@ package com.videojs.providers{
         public function die():void{
             if(_videoReference)
             {
+                // Clears the image currently displayed in the Video object.
+                _videoReference.clear();
                 _videoReference.attachNetStream(null);
             }
 
@@ -487,7 +489,6 @@ package com.videojs.providers{
             if (_src.path === null) {
               _pausePending = true;
             }
-
             _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_READY, {ns:_ns}));
         }
 
@@ -551,7 +552,7 @@ package com.videojs.providers{
                     _throughputTimer.reset();
                     _throughputTimer.start();
 
-                    if(!_pauseOnStart || _model.autoplay){
+                    if(_model.autoplay){
                         _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
                         _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_STREAM_START, {info:e.info}));
                     }
@@ -651,10 +652,6 @@ package com.videojs.providers{
         }
 
         public function onMetaData(pMetaData:Object):void{
-            if (_onmetadadataFired) {
-              return;
-            }
-
             _metadata = pMetaData;
             if(pMetaData.duration != undefined){
                 _isLive = false;
@@ -666,10 +663,14 @@ package com.videojs.providers{
                 _canSeekAhead = false;
             }
             _model.broadcastEvent(new VideoPlaybackEvent(VideoPlaybackEvent.ON_META_DATA, {metadata:_metadata}));
-            _model.broadcastEventExternally(ExternalEventName.ON_METADATA, _metadata);
-            _model.broadcastEventExternally(ExternalEventName.ON_CAN_PLAY);
 
-            _model.broadcastEventExternally(ExternalEventName.ON_BUFFER_FULL);
+            // the first time metadata is encountered, trigger loadedmetadata, canplay, and loadeddata
+            if (!_onmetadadataFired) {
+                _model.broadcastEventExternally(ExternalEventName.ON_METADATA, _metadata);
+                _model.broadcastEventExternally(ExternalEventName.ON_CAN_PLAY);
+                _model.broadcastEventExternally(ExternalEventName.ON_BUFFER_FULL);
+            }
+
             _onmetadadataFired = true;
         }
 
