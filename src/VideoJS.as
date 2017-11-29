@@ -30,7 +30,6 @@ package{
         private var _stageSizeTimer:Timer;
 
         public function VideoJS(){
-
             _stageSizeTimer = new Timer(250);
             _stageSizeTimer.addEventListener(TimerEvent.TIMER, onStageSizeTimerTick);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -67,13 +66,15 @@ package{
         }
 
         private function registerExternalMethods():void{
-
+            ExternalInterface.marshallExceptions = true;
             try{
                 ExternalInterface.addCallback("vjs_appendBuffer", onAppendBufferCalled);
+                ExternalInterface.addCallback("vjs_appendChunkReady", onAppendChunkReadyCalled);
                 ExternalInterface.addCallback("vjs_echo", onEchoCalled);
                 ExternalInterface.addCallback("vjs_endOfStream", onEndOfStreamCalled);
                 ExternalInterface.addCallback("vjs_abort", onAbortCalled);
                 ExternalInterface.addCallback("vjs_discontinuity", onDiscontinuityCalled);
+
                 ExternalInterface.addCallback("vjs_getProperty", onGetPropertyCalled);
                 ExternalInterface.addCallback("vjs_setProperty", onSetPropertyCalled);
                 ExternalInterface.addCallback("vjs_autoplay", onAutoplayCalled);
@@ -83,6 +84,10 @@ package{
                 ExternalInterface.addCallback("vjs_pause", onPauseCalled);
                 ExternalInterface.addCallback("vjs_resume", onResumeCalled);
                 ExternalInterface.addCallback("vjs_stop", onStopCalled);
+
+                // This callback should only be used when in data generation mode as it
+                // will adjust the notion of current time without notifiying the player
+                ExternalInterface.addCallback("vjs_adjustCurrentTime", onAdjustCurrentTimeCalled);
             }
             catch(e:SecurityError){
                 if (loaderInfo.parameters.debug != undefined && loaderInfo.parameters.debug == "true") {
@@ -129,6 +134,14 @@ package{
 
             if(loaderInfo.parameters.preload != undefined && loaderInfo.parameters.preload != ""){
                 _app.model.preload = String(loaderInfo.parameters.preload);
+            }
+
+            if(loaderInfo.parameters.muted != undefined && loaderInfo.parameters.muted == "true"){
+                _app.model.muted = true;
+            }
+
+            if(loaderInfo.parameters.loop != undefined && loaderInfo.parameters.loop == "true"){
+                _app.model.loop = true;
             }
 
             if(loaderInfo.parameters.src != undefined && loaderInfo.parameters.src != ""){
@@ -188,9 +201,19 @@ package{
 
         private function onAppendBufferCalled(base64str:String):void{
             var bytes:ByteArray = Base64.decode(base64str);
+            // write the bytes to the provider
+            _app.model.appendBuffer(bytes);
+        }
+
+        private function onAppendChunkReadyCalled(fnName:String):void{
+            var bytes:ByteArray = Base64.decode(ExternalInterface.call(fnName));
 
             // write the bytes to the provider
             _app.model.appendBuffer(bytes);
+        }
+
+        private function onAdjustCurrentTimeCalled(pValue:Number):void {
+            _app.model.adjustCurrentTime(pValue);
         }
 
         private function onEchoCalled(pResponse:* = null):*{
@@ -292,6 +315,9 @@ package{
                     break;
                 case "rtmpStream":
                     return _app.model.rtmpStream;
+                    break;
+                case "getVideoPlaybackQuality":
+                    return _app.model.videoPlaybackQuality;
                     break;
                 case "numberOfLevels":
                     return _app.model.numberOfLevels;

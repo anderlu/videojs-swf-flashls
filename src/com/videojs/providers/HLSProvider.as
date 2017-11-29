@@ -342,6 +342,13 @@ package com.videojs.providers{
           Log.debug("HLSProvider.metadata");
           return _metadata;
         }
+        /**
+        * Should return an object that contains playback quality details, following the
+        * form of https://w3c.github.io/media-source/#VideoPlaybackQuality
+        */
+        public function get videoPlaybackQuality():Object{
+          return {};
+        }
 
         /**
          * Should return the most reasonable string representation of the current assets source location.
@@ -457,6 +464,12 @@ package com.videojs.providers{
           Log.debug("HLSProvider.resume");
           _hls.stream.resume();
           _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
+        }
+
+        /**
+        * Called when current time needs to be adjusted slightly without seeking
+        */
+        public function adjustCurrentTime(pValue:Number):void {
         }
 
         /**
