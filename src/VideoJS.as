@@ -61,7 +61,7 @@ package{
             var _ctxMenu:ContextMenu = new ContextMenu();
             _ctxMenu.hideBuiltInItems();
             _ctxMenu.customItems.push(_ctxVersion, _ctxAbout);
-            this.contextMenu = _ctxMenu;
+            // this.contextMenu = _ctxMenu;
 
         }
 
