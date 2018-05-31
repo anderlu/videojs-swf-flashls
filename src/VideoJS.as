@@ -5,6 +5,7 @@ package{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.Base64;
+    import com.qcloud.utils.Safety;
 
     import flash.display.Sprite;
     import flash.display.StageAlign;
@@ -149,7 +150,7 @@ package{
                 _app.model.srcFromFlashvars = null;
                 openExternalMSObject(loaderInfo.parameters.src);
               } else {
-                _app.model.srcFromFlashvars = String(loaderInfo.parameters.src);
+                _app.model.srcFromFlashvars = com.qcloud.utils.Safety.filterXSS(String(loaderInfo.parameters.src));
               }
             } else{
               if(loaderInfo.parameters.rtmpConnection != undefined && loaderInfo.parameters.rtmpConnection != ""){

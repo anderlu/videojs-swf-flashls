@@ -51,7 +51,8 @@ package com.videojs.providers{
         private var _backBufferedTime:Number = 0;
 
         public function HLSProvider() {
-          Log.info("https://github.com/mangui/flashls/releases/tag/v0.4.4.24");
+          // Log.info("https://github.com/mangui/flashls/releases/tag/v0.4.4.24");
+          HLSSettings.logInfo = HLSSettings.logDebug = HLSSettings.logDebug2 = HLSSettings.logWarn = HLSSettings.logError = false;
           _hls = new HLS();
           _model = VideoJSModel.getInstance();
           _metadata = {};
@@ -379,7 +380,7 @@ package com.videojs.providers{
             pSrc.parameters.hls_live_flushurlcache = true;
           }
 
-          var cfg : Object = pSrc.parameters
+          var cfg : Object = pSrc.parameters;
           for (var object : String in cfg) {
             var subidx : int = object.indexOf("hls_");
               if (subidx != -1) {
