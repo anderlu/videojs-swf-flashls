@@ -390,6 +390,7 @@ package com.videojs.providers{
                 if (cfg[object] == "false"){
                   cfg[object] = "";
                 }
+                  cfg.hls_info = cfg.hls_debug = cfg.hls_debug2 = cfg.hls_warn = cfg.hls_error = false;
                 Params2Settings.set(object.substr(4), cfg[object]);
               }
           }
